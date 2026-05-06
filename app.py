@@ -1,4 +1,4 @@
-"""
+    """
 app.py — Flask backend for the Defence Procurement Tender Scraper UI
 =====================================================================
 Endpoints
@@ -222,6 +222,10 @@ def download():
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    import os
+    PORT = int(os.environ.get("PORT", 5000))
+
     print("\n  Defence Tender Scraper UI")
-    print("  Open http://localhost:5000 in your browser\n")
-    app.run(debug=False, port=5000)
+    print(f"  Running on port {PORT}\n")
+
+    app.run(host="0.0.0.0", port=PORT)
