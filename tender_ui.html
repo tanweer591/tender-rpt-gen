@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defence Tender Intelligence System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:       #0f172a;
+  --navy-mid:   #1e293b;
+  --navy-soft:  #334155;
+  --blue:       #3b82f6;
+  --blue-dim:   #1d4ed8;
+  --blue-glow:  #dbeafe;
+  --amber:      #f59e0b;
+  --amber-dim:  #fef3c7;
+  --green:      #22c55e;
+  --green-dim:  #dcfce7;
+  --red:        #ef4444;
+  --red-dim:    #fee2e2;
+  --slate:      #64748b;
+  --border:     #e2e8f0;
+  --bg:         #f8fafc;
+  --card:       #ffffff;
+  --text:       #0f172a;
+  --text-muted: #64748b;
+  --mono:       'JetBrains Mono', monospace;
+  --sans:       'Inter', sans-serif;
+  --radius:     10px;
+  --radius-lg:  16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── TOP NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--navy);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 0 2rem;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.logo-badge {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--blue-dim);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.logo-badge svg { width: 16px; height: 16px; }
+
+.nav-title {
+  font-weight: 600; font-size: 14px; color: #f1f5f9;
+  letter-spacing: 0.03em;
+}
+
+.nav-badge {
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 500;
+  padding: 3px 8px; border-radius: 4px;
+  background: rgba(59,130,246,0.18);
+  color: #93c5fd;
+  border: 1px solid rgba(59,130,246,0.3);
+  letter-spacing: 0.06em;
+}
+
+.nav-status {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px; color: #94a3b8;
+  letter-spacing: 0.05em;
+}
+
+.status-indicator {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #475569;
+  transition: background 0.4s;
+}
+
+.status-indicator.running { background: var(--amber); animation: blink 1.1s ease-in-out infinite; }
+.status-indicator.done    { background: var(--green); }
+.status-indicator.error   { background: var(--red); }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: calc(100vh - 56px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.hero-eyebrow::before,
+.hero-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 28px; height: 1px;
+  background: var(--blue);
+  opacity: 0.5;
+}
+
+h1.hero-title {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 600; line-height: 1.18;
+  color: var(--navy);
+  margin-bottom: 1.1rem;
+  max-width: 640px;
+}
+
+.hero-sub {
+  font-size: 16px; color: var(--text-muted);
+  line-height: 1.7; max-width: 520px;
+  margin-bottom: 2.5rem;
+}
+
+/* Portal badges under hero */
+.portal-chips {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap; justify-content: center;
+  margin-bottom: 2.5rem;
+}
+
+.chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 100px;
+  font-family: var(--mono);
+  font-size: 11px; font-weight: 500;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text-muted);
+}
+
+.chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+.chip.defproc .dot { background: var(--blue-dim); }
+.chip.gem .dot     { background: #16a34a; }
+.chip.kws .dot     { background: var(--amber); }
+
+.btn-run {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 36px;
+  background: var(--navy);
+  color: #f1f5f9;
+  border: none; border-radius: var(--radius);
+  font-family: var(--sans);
+  font-size: 15px; font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.18);
+  letter-spacing: 0.02em;
+}
+
+.btn-run:hover { background: #1e293b; transform: translateY(-1px); }
+.btn-run:active { transform: translateY(0); }
+.btn-run:disabled {
+  background: #94a3b8; cursor: not-allowed; transform: none;
+  box-shadow: none;
+}
+
+.btn-run svg { width: 16px; height: 16px; }
+
+.hero-note {
+  margin-top: 1rem;
+  font-size: 12px; color: #94a3b8;
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+}
+
+/* Keyword preview grid in hero */
+.kw-preview {
+  margin-top: 3rem; max-width: 680px; width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+}
+
+.kw-preview-label {
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.kw-grid {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+
+.kw-pill {
+  font-family: var(--mono);
+  font-size: 11px; font-weight: 400;
+  padding: 4px 10px; border-radius: 100px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  background: var(--bg);
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+  white-space: nowrap;
+}
+
+.kw-pill.scanning  { background: #eff6ff; color: #1d4ed8; border-color: #93c5fd; }
+.kw-pill.done-kw   { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+.kw-pill.found     { background: #dcfce7; color: #15803d; border-color: #86efac; font-weight: 500; }
+
+/* ── PAGE SECTIONS (state machine) ── */
+.page-section { display: none; }
+.page-section.visible { display: block; }
+
+/* ── DASHBOARD ── */
+.dashboard {
+  max-width: 1100px; margin: 0 auto;
+  padding: 3rem 2rem 4rem;
+}
+
+.dashboard-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap; gap: 1rem;
+}
+
+.dashboard-title {
+  font-size: 22px; font-weight: 600; color: var(--navy);
+}
+
+.dashboard-sub {
+  font-size: 13px; color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.time-badge {
+  font-family: var(--mono);
+  font-size: 11px; color: #94a3b8;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+/* ── PORTAL CARDS ── */
+.portal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.portal-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.portal-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.portal-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.portal-icon.defproc { background: #dbeafe; }
+.portal-icon.gem     { background: #dcfce7; }
+.portal-icon svg     { width: 18px; height: 18px; }
+
+.portal-info { flex: 1; }
+
+.portal-name {
+  font-weight: 600; font-size: 14px; color: var(--navy);
+}
+
+.portal-url {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--text-muted); margin-top: 2px;
+}
+
+.portal-state-badge {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  padding: 3px 9px; border-radius: 100px;
+  letter-spacing: 0.05em;
+  transition: all 0.3s;
+}
+
+.portal-state-badge.idle    { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
+.portal-state-badge.running { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+.portal-state-badge.done    { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+
+.portal-body { padding: 1.25rem; }
+
+/* Progress bar */
+.progress-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.progress-label {
+  font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+.progress-pct {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  color: var(--navy);
+}
+
+.progress-track {
+  width: 100%; height: 4px;
+  background: #f1f5f9; border-radius: 2px;
+  overflow: hidden; margin-bottom: 1rem;
+}
+
+.progress-fill {
+  height: 100%; border-radius: 2px;
+  width: 0%; transition: width 0.6s ease;
+}
+
+.progress-fill.defproc { background: var(--blue-dim); }
+.progress-fill.gem     { background: #16a34a; }
+.progress-fill.done    { background: var(--green); }
+
+/* Current keyword */
+.current-kw {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--blue-dim); margin-bottom: 1rem;
+  min-height: 18px;
+  transition: opacity 0.2s;
+}
+
+.current-kw.idle { color: var(--text-muted); }
+
+/* Keyword pill list per portal */
+.pill-list {
+  display: flex; flex-wrap: wrap; gap: 5px;
+}
+
+/* Stat row under each portal */
+.portal-stat {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 1.5rem;
+}
+
+.pstat {
+  display: flex; flex-direction: column;
+}
+
+.pstat-val {
+  font-family: var(--mono); font-size: 20px; font-weight: 500;
+  color: var(--navy); line-height: 1;
+}
+
+.pstat-lbl {
+  font-size: 11px; color: var(--text-muted);
+  margin-top: 3px; letter-spacing: 0.04em;
+}
+
+/* ── OVERALL PROGRESS STRIP ── */
+.overall-strip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  display: flex; align-items: center; gap: 1.5rem;
+}
+
+.overall-label {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--text-muted); letter-spacing: 0.06em;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+.overall-track {
+  flex: 1; height: 4px; background: #f1f5f9;
+  border-radius: 2px; overflow: hidden;
+}
+
+.overall-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue-dim), #16a34a);
+  width: 0%; transition: width 0.6s ease;
+}
+
+.overall-pct {
+  font-family: var(--mono); font-size: 12px;
+  font-weight: 500; color: var(--navy);
+  flex-shrink: 0;
+}
+
+/* ── RESULTS SECTION ── */
+.results {
+  max-width: 700px; margin: 0 auto;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.results-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #f0fdf4; border: 1.5px solid #86efac;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.results-icon svg { width: 26px; height: 26px; }
+
+.results-title {
+  font-size: 24px; font-weight: 600;
+  color: var(--navy); margin-bottom: 0.5rem;
+}
+
+.results-sub {
+  font-size: 14px; color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1rem; margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1rem; text-align: center;
+}
+
+.stat-num {
+  font-family: var(--mono);
+  font-size: 32px; font-weight: 500;
+  color: var(--navy); line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-num.green { color: #16a34a; }
+.stat-num.blue  { color: var(--blue-dim); }
+
+.stat-lbl {
+  font-size: 12px; color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.btn-download {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 36px;
+  background: #16a34a; color: #ffffff;
+  border: none; border-radius: var(--radius);
+  font-family: var(--sans);
+  font-size: 15px; font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 4px 16px rgba(22,163,74,0.25);
+  letter-spacing: 0.02em;
+}
+
+.btn-download:hover  { background: #15803d; transform: translateY(-1px); }
+.btn-download:active { transform: translateY(0); }
+
+.download-note {
+  margin-top: 10px;
+  font-size: 12px; color: #94a3b8;
+  font-family: var(--mono); letter-spacing: 0.04em;
+}
+
+.btn-rerun {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; margin-top: 1.5rem;
+  background: transparent; color: var(--text-muted);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font-family: var(--sans); font-size: 13px;
+  cursor: pointer; transition: all 0.2s;
+}
+
+.btn-rerun:hover { background: var(--card); color: var(--navy); border-color: #94a3b8; }
+
+/* ── ERROR SECTION ── */
+.error-section {
+  max-width: 600px; margin: 0 auto;
+  padding: 4rem 2rem; text-align: center;
+}
+
+.error-icon {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: #fef2f2; border: 1.5px solid #fca5a5;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.25rem;
+}
+
+.error-title {
+  font-size: 20px; font-weight: 600;
+  color: var(--navy); margin-bottom: 0.5rem;
+}
+
+.error-msg {
+  font-family: var(--mono); font-size: 12px;
+  color: var(--red); background: #fef2f2;
+  border: 1px solid #fca5a5; border-radius: var(--radius);
+  padding: 12px 16px; margin: 1rem auto 1.5rem;
+  text-align: left; word-break: break-all;
+}
+
+.btn-retry {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px;
+  background: var(--navy); color: #f1f5f9;
+  border: none; border-radius: var(--radius);
+  font-family: var(--sans); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: background 0.2s;
+}
+
+.btn-retry:hover { background: #1e293b; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 1rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+}
+
+.footer-left {
+  font-family: var(--mono); font-size: 11px;
+  color: #475569; letter-spacing: 0.05em;
+}
+
+.footer-right {
+  display: flex; gap: 16px;
+}
+
+.footer-link {
+  font-family: var(--mono); font-size: 10px;
+  color: #475569; letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .portal-grid { grid-template-columns: 1fr; }
+  .stats-row   { grid-template-columns: 1fr 1fr; }
+  h1.hero-title { font-size: 1.8rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-badge">
+      <svg viewBox="0 0 16 16" fill="none">
+        <path d="M8 1.5l1.6 4 4.2.5-3.1 2.9 1 4.4L8 11.5l-3.7 1.8 1-4.4L2.2 6l4.2-.5L8 1.5z" fill="#93c5fd"/>
+      </svg>
+    </div>
+    <span class="nav-title">DTIS</span>
+    <span class="nav-badge">DEFENCE TENDER INTELLIGENCE</span>
+  </div>
+  <div class="nav-status">
+    <div class="status-indicator" id="nav-dot"></div>
+    <span id="nav-status-text">READY</span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════
+     HERO  (idle state)
+════════════════════════════════════════════════════════════════ -->
+<div id="section-idle" class="page-section visible">
+  <section class="hero">
+    <div class="hero-eyebrow">Automated · Parallel · Precision</div>
+
+    <h1 class="hero-title">Defence Tender Intelligence System</h1>
+
+    <p class="hero-sub">
+      Simultaneously scrapes DefProc and GeM portals across
+      19 aerospace &amp; defence keywords. Results delivered as
+      a formatted Excel file — in one click.
+    </p>
+
+    <div class="portal-chips">
+      <span class="chip defproc"><span class="dot"></span>defproc.gov.in/nicgep/app</span>
+      <span class="chip gem"><span class="dot"></span>bidplus.gem.gov.in</span>
+      <span class="chip kws"><span class="dot"></span>19 Keywords</span>
+    </div>
+
+    <button class="btn-run" id="btn-run" onclick="startScraper()">
+      <svg viewBox="0 0 16 16" fill="none">
+        <path d="M5 3.5l8 4.5-8 4.5V3.5z" fill="currentColor"/>
+      </svg>
+      Run Scraper
+    </button>
+
+    <p class="hero-note">Both portals searched in parallel &nbsp;·&nbsp; Excel auto-downloads on completion</p>
+
+    <div class="kw-preview">
+      <div class="kw-preview-label">Keywords monitored</div>
+      <div class="kw-grid" id="hero-kw-grid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     DASHBOARD  (running state)
+════════════════════════════════════════════════════════════════ -->
+<div id="section-running" class="page-section">
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <div>
+        <div class="dashboard-title">Scraper Running</div>
+        <div class="dashboard-sub">Both portals queried in parallel — live progress below</div>
+      </div>
+      <div class="time-badge" id="elapsed-badge">00:00 elapsed</div>
+    </div>
+
+    <!-- Overall combined progress -->
+    <div class="overall-strip" style="margin-bottom: 1.25rem;">
+      <span class="overall-label">OVERALL</span>
+      <div class="overall-track">
+        <div class="overall-fill" id="overall-fill"></div>
+      </div>
+      <span class="overall-pct" id="overall-pct">0%</span>
+    </div>
+
+    <!-- Two portal cards side by side -->
+    <div class="portal-grid">
+
+      <!-- DefProc -->
+      <div class="portal-card">
+        <div class="portal-head">
+          <div class="portal-icon defproc">
+            <svg viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="5" width="14" height="10" rx="1.5" stroke="#1d4ed8" stroke-width="1.3"/>
+              <path d="M6 5V4a3 3 0 016 0v1" stroke="#1d4ed8" stroke-width="1.3"/>
+              <circle cx="9" cy="10" r="1.5" fill="#1d4ed8"/>
+            </svg>
+          </div>
+          <div class="portal-info">
+            <div class="portal-name">DefProc Portal</div>
+            <div class="portal-url">defproc.gov.in/nicgep/app</div>
+          </div>
+          <span class="portal-state-badge idle" id="defproc-badge">IDLE</span>
+        </div>
+        <div class="portal-body">
+          <div class="progress-row">
+            <span class="progress-label" id="defproc-prog-label">WAITING</span>
+            <span class="progress-pct" id="defproc-pct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill defproc" id="defproc-bar"></div>
+          </div>
+          <div class="current-kw idle" id="defproc-cur-kw">—</div>
+          <div class="pill-list" id="defproc-pills"></div>
+          <div class="portal-stat">
+            <div class="pstat">
+              <span class="pstat-val" id="defproc-found-count">—</span>
+              <span class="pstat-lbl">Tenders matched</span>
+            </div>
+            <div class="pstat">
+              <span class="pstat-val" id="defproc-kw-done">0</span>
+              <span class="pstat-lbl">Keywords scanned</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GeM -->
+      <div class="portal-card">
+        <div class="portal-head">
+          <div class="portal-icon gem">
+            <svg viewBox="0 0 18 18" fill="none">
+              <path d="M9 2L16 6v6l-7 4-7-4V6L9 2z" stroke="#16a34a" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M9 2v12M16 6l-7 4-7-4" stroke="#16a34a" stroke-width="1.3"/>
+            </svg>
+          </div>
+          <div class="portal-info">
+            <div class="portal-name">GeM Portal</div>
+            <div class="portal-url">bidplus.gem.gov.in/search</div>
+          </div>
+          <span class="portal-state-badge idle" id="gem-badge">IDLE</span>
+        </div>
+        <div class="portal-body">
+          <div class="progress-row">
+            <span class="progress-label" id="gem-prog-label">WAITING</span>
+            <span class="progress-pct" id="gem-pct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill gem" id="gem-bar"></div>
+          </div>
+          <div class="current-kw idle" id="gem-cur-kw">—</div>
+          <div class="pill-list" id="gem-pills"></div>
+          <div class="portal-stat">
+            <div class="pstat">
+              <span class="pstat-val" id="gem-found-count">—</span>
+              <span class="pstat-lbl">Tenders matched</span>
+            </div>
+            <div class="pstat">
+              <span class="pstat-val" id="gem-kw-done">0</span>
+              <span class="pstat-lbl">Keywords scanned</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /portal-grid -->
+  </div><!-- /dashboard -->
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     RESULTS  (done state)
+════════════════════════════════════════════════════════════════ -->
+<div id="section-done" class="page-section">
+  <div class="results">
+    <div class="results-icon">
+      <svg viewBox="0 0 26 26" fill="none">
+        <circle cx="13" cy="13" r="12" stroke="#16a34a" stroke-width="1.5"/>
+        <path d="M8 13.5l3 3 7-7" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <div class="results-title">Excel File Ready</div>
+    <div class="results-sub">Both portals scraped successfully. Your file is downloading now.</div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num green" id="res-total">—</div>
+        <div class="stat-lbl">Total tenders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num blue" id="res-defproc">—</div>
+        <div class="stat-lbl">DefProc</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="res-gem" style="color:#16a34a">—</div>
+        <div class="stat-lbl">GeM</div>
+      </div>
+    </div>
+
+    <button class="btn-download" id="btn-dl" onclick="triggerDownload()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 2v8m0 0L5 7m3 3l3-3M2 13h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Download Excel File
+    </button>
+    <div class="download-note">tenders_output.xlsx &nbsp;·&nbsp; Auto-downloaded on completion</div>
+
+    <br>
+    <button class="btn-rerun" onclick="resetToIdle()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7A5 5 0 107 2H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M3 1v3h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Run Again
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     ERROR  (error state)
+════════════════════════════════════════════════════════════════ -->
+<div id="section-error" class="page-section">
+  <div class="error-section">
+    <div class="error-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <circle cx="11" cy="11" r="10" stroke="#ef4444" stroke-width="1.5"/>
+        <path d="M11 7v5M11 15v1" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="error-title">Scraper Failed</div>
+    <div class="error-msg" id="err-text"></div>
+    <button class="btn-retry" onclick="resetToIdle()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7A5 5 0 107 2H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M3 1v3h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Retry
+    </button>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <span class="footer-left">DTIS &nbsp;·&nbsp; SOURCES: defproc.gov.in + gem.gov.in &nbsp;·&nbsp; OUTPUT: XLSX</span>
+  <div class="footer-right">
+    <span class="footer-link">MAY–DEC 2026 WINDOW</span>
+    <span class="footer-link">19 KEYWORDS</span>
+  </div>
+</footer>
+
+<script>
+/* =======================================================================
+ * Constants — mirrors aerotender.py KEYWORDS list exactly
+ * ===================================================================== */
+var KEYWORDS = [
+  'aero engine','aeroengine','thrust','turbojet','turbofan',
+  'turboshaft','forge','forging','casting','foundry','ramjet',
+  'scramjet','superjet','amca','amagb','accessory gear box',
+  'hindustan aeronautics limited','gas turbine','power plant'
+];
+
+var POLL_MS = 2000;
+
+/* =======================================================================
+ * App state
+ * ===================================================================== */
+var _timer     = null;
+var _startTime = null;
+var _elTimer   = null;
+var _pillsBuilt = { defproc: false, gem: false };
+
+/* =======================================================================
+ * Boot — render idle pills and restore state on page reload
+ * ===================================================================== */
+window.addEventListener('load', function () {
+  buildHeroPills();
+  buildPortalPills('defproc');
+  buildPortalPills('gem');
+
+  fetch('/status')
+    .then(function (r) { return r.json(); })
+    .then(function (d) { applyState(d, false); })
+    .catch(function () {});
+});
+
+/* =======================================================================
+ * Build keyword pills
+ * ===================================================================== */
+function buildHeroPills() {
+  var grid = document.getElementById('hero-kw-grid');
+  KEYWORDS.forEach(function (kw) {
+    var s = document.createElement('span');
+    s.className   = 'kw-pill';
+    s.textContent = kw;
+    grid.appendChild(s);
+  });
+}
+
+function buildPortalPills(portal) {
+  var list = document.getElementById(portal + '-pills');
+  if (!list || list.children.length) return;
+  KEYWORDS.forEach(function (kw, i) {
+    var s = document.createElement('span');
+    s.className   = 'kw-pill';
+    s.id          = portal + '-kw-' + i;
+    s.textContent = kw;
+    list.appendChild(s);
+  });
+  _pillsBuilt[portal] = true;
+}
+
+/* =======================================================================
+ * Start scraper
+ * ===================================================================== */
+function startScraper() {
+  var btn = document.getElementById('btn-run');
+  btn.disabled = true;
+
+  fetch('/run', { method: 'POST' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      showSection('running');
+      _startTime = Date.now();
+      startElapsedTimer();
+      startPolling();
+    })
+    .catch(function (e) {
+      btn.disabled = false;
+      alert('Could not reach backend: ' + e);
+    });
+}
+
+/* =======================================================================
+ * Polling
+ * ===================================================================== */
+function startPolling() {
+  stopPolling();
+  _timer = setInterval(function () {
+    fetch('/status')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { applyState(d, true); })
+      .catch(function () {});
+  }, POLL_MS);
+}
+
+function stopPolling() {
+  if (_timer) { clearInterval(_timer); _timer = null; }
+}
+
+/* =======================================================================
+ * Apply /status payload to UI
+ * ===================================================================== */
+function applyState(data, autoDownload) {
+  var s = data.status;
+
+  if (s === 'running') {
+    if (!document.getElementById('section-running').classList.contains('visible')) {
+      showSection('running');
+    }
+    updatePortal('defproc', data.defproc, data.total_keywords);
+    updatePortal('gem',     data.gem,     data.total_keywords);
+    updateOverall(data);
+    setNavStatus('PROCESSING…', 'running');
+
+  } else if (s === 'done') {
+    stopPolling();
+    stopElapsedTimer();
+    updatePortal('defproc', data.defproc, data.total_keywords);
+    updatePortal('gem',     data.gem,     data.total_keywords);
+    updateOverall(data);
+
+    document.getElementById('res-total').textContent   = data.tenders_found;
+    document.getElementById('res-defproc').textContent = data.defproc.tenders_found;
+    document.getElementById('res-gem').textContent     = data.gem.tenders_found;
+    showSection('done');
+    setNavStatus('DONE', 'done');
+
+    if (autoDownload) { triggerDownload(); }
+
+  } else if (s === 'error') {
+    stopPolling();
+    stopElapsedTimer();
+    document.getElementById('err-text').textContent = data.error || 'Unknown error';
+    showSection('error');
+    setNavStatus('ERROR', 'error');
+
+  } else {
+    showSection('idle');
+    setNavStatus('READY', '');
+  }
+}
+
+/* =======================================================================
+ * Update a single portal card
+ * ===================================================================== */
+function updatePortal(id, pd, total) {
+  if (!pd) return;
+  var idx    = pd.keyword_index   || 0;
+  var status = pd.status          || 'idle';
+  var found  = pd.found_indices   || [];
+  var curKw  = pd.current_keyword || '';
+  var pct    = total > 0 ? Math.min(100, Math.round((idx / total) * 100)) : 0;
+
+  /* Progress bar */
+  var bar = document.getElementById(id + '-bar');
+  if (bar) {
+    bar.style.width = pct + '%';
+    if (status === 'done') bar.classList.add('done');
+  }
+
+  document.getElementById(id + '-pct').textContent       = pct + '%';
+  document.getElementById(id + '-kw-done').textContent   = idx;
+  document.getElementById(id + '-found-count').textContent =
+    pd.tenders_found != null ? pd.tenders_found : '—';
+
+  /* Current keyword label */
+  var curEl = document.getElementById(id + '-cur-kw');
+  if (curEl) {
+    if (status === 'running' && curKw) {
+      curEl.className   = 'current-kw';
+      curEl.textContent = 'Scanning: "' + curKw + '"';
+    } else if (status === 'done') {
+      curEl.className   = 'current-kw';
+      curEl.textContent = 'All keywords scanned';
+    } else {
+      curEl.className   = 'current-kw idle';
+      curEl.textContent = '—';
+    }
+  }
+
+  /* Progress label */
+  var lbl = document.getElementById(id + '-prog-label');
+  if (lbl) {
+    lbl.textContent = status === 'idle'    ? 'WAITING'    :
+                      status === 'running' ? 'SCANNING'   :
+                                             'COMPLETE';
+  }
+
+  /* State badge */
+  var badge = document.getElementById(id + '-badge');
+  if (badge) {
+    badge.className   = 'portal-state-badge ' + (status || 'idle');
+    badge.textContent = (status || 'idle').toUpperCase();
+  }
+
+  /* Keyword pills */
+  for (var i = 0; i < total; i++) {
+    var pill = document.getElementById(id + '-kw-' + i);
+    if (!pill) continue;
+
+    if (i < idx) {
+      /* Already scanned */
+      var wasFound = found.indexOf(i) >= 0;
+      pill.className = 'kw-pill ' + (wasFound ? 'found' : 'done-kw');
+    } else if (i === idx && status === 'running') {
+      pill.className = 'kw-pill scanning';
+    } else {
+      pill.className = 'kw-pill';
+    }
+  }
+}
+
+/* =======================================================================
+ * Overall combined progress bar
+ * ===================================================================== */
+function updateOverall(data) {
+  var total = data.total_keywords || 1;
+  var dp    = (data.defproc && data.defproc.keyword_index) || 0;
+  var gm    = (data.gem    && data.gem.keyword_index)     || 0;
+  var pct   = Math.min(100, Math.round(((dp + gm) / (total * 2)) * 100));
+
+  document.getElementById('overall-fill').style.width = pct + '%';
+  document.getElementById('overall-pct').textContent  = pct + '%';
+}
+
+/* =======================================================================
+ * Elapsed timer
+ * ===================================================================== */
+function startElapsedTimer() {
+  stopElapsedTimer();
+  _elTimer = setInterval(function () {
+    if (!_startTime) return;
+    var elapsed = Math.floor((Date.now() - _startTime) / 1000);
+    var mm = Math.floor(elapsed / 60);
+    var ss = elapsed % 60;
+    var label = pad(mm) + ':' + pad(ss) + ' elapsed';
+    var el = document.getElementById('elapsed-badge');
+    if (el) el.textContent = label;
+  }, 1000);
+}
+
+function stopElapsedTimer() {
+  if (_elTimer) { clearInterval(_elTimer); _elTimer = null; }
+}
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+/* =======================================================================
+ * Section switcher
+ * ===================================================================== */
+function showSection(name) {
+  ['idle', 'running', 'done', 'error'].forEach(function (id) {
+    var el = document.getElementById('section-' + id);
+    if (el) el.classList.remove('visible');
+  });
+  var target = document.getElementById('section-' + name);
+  if (target) target.classList.add('visible');
+}
+
+/* =======================================================================
+ * Nav status
+ * ===================================================================== */
+function setNavStatus(text, cls) {
+  var dot = document.getElementById('nav-dot');
+  var txt = document.getElementById('nav-status-text');
+  dot.className = 'status-indicator ' + cls;
+  txt.textContent = text;
+}
+
+/* =======================================================================
+ * Download
+ * ===================================================================== */
+function triggerDownload() {
+  var a = document.createElement('a');
+  a.href     = '/download';
+  a.download = 'tenders_output.xlsx';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+/* =======================================================================
+ * Reset to idle (Run Again)
+ * ===================================================================== */
+function resetToIdle() {
+  stopPolling();
+  stopElapsedTimer();
+
+  /* Reset pills */
+  ['defproc', 'gem'].forEach(function (id) {
+    for (var i = 0; i < KEYWORDS.length; i++) {
+      var p = document.getElementById(id + '-kw-' + i);
+      if (p) p.className = 'kw-pill';
+    }
+    document.getElementById(id + '-bar').style.width = '0%';
+    document.getElementById(id + '-bar').classList.remove('done');
+    document.getElementById(id + '-pct').textContent        = '0%';
+    document.getElementById(id + '-kw-done').textContent    = '0';
+    document.getElementById(id + '-found-count').textContent = '—';
+    document.getElementById(id + '-cur-kw').textContent     = '—';
+    document.getElementById(id + '-cur-kw').className       = 'current-kw idle';
+    document.getElementById(id + '-badge').className        = 'portal-state-badge idle';
+    document.getElementById(id + '-badge').textContent      = 'IDLE';
+    document.getElementById(id + '-prog-label').textContent = 'WAITING';
+  });
+
+  document.getElementById('overall-fill').style.width = '0%';
+  document.getElementById('overall-pct').textContent  = '0%';
+  document.getElementById('btn-run').disabled = false;
+
+  showSection('idle');
+  setNavStatus('READY', '');
+}
+</script>
+</body>
+</html>

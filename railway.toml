@@ -1,0 +1,17 @@
+# railway.toml — Railway deployment configuration
+# Docs: https://docs.railway.app/reference/config-as-code
+
+[build]
+# Use our Dockerfile (required for headless Chrome support)
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Railway injects $PORT automatically; gunicorn binds to it.
+startCommand = "gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 600 --log-level info"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Health check — Railway pings / to decide if the deploy succeeded
+healthcheckPath = "/"
+healthcheckTimeout = 60
