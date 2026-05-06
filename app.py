@@ -223,9 +223,12 @@ def download():
 
 if __name__ == "__main__":
     import os
+
     PORT = int(os.environ.get("PORT", 5000))
 
-    print("\n  Defence Tender Scraper UI")
-    print(f"  Running on port {PORT}\n")
+    print("Starting Flask on port:", PORT)
 
-    app.run(host="0.0.0.0", port=PORT)
+    app.run(
+        host="0.0.0.0",   # IMPORTANT (makes it publicly accessible)
+        port=PORT        # IMPORTANT (Railway assigns this)
+    )
